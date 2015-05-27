@@ -40,6 +40,13 @@ class Fuel {
 		$result = $mysqli->query($query);
 		
 		$previous_miles = 0;
+		$total_miles = 0;
+		$total_gallons = 0;
+		$total_cost = 0;
+		$total_city = 0;
+		$city_count = 0;
+		$mpg_count = 0;
+		$mpg_total = 0;
 		
 		$table = '<table>';
 		$table .= '<tr><th colspan=10 align="center">' . $vehicle . '</th></tr>';
@@ -54,34 +61,46 @@ class Fuel {
 				foreach ($this->fuel_columns as $var) {
 					if ($var == 'fuel_gallons') {
 						$gallons = $row[$var];
+						$total_gallons += $gallons;
+						$table .= '<td align="right">' . $row[$var] . '</td>';
 					}
-					if ($var == 'fuel_odo') {
+					else if ($var == 'fuel_cost') {
+						$total_cost += $row['fuel_cost'];
+						$table .= '<td align="right">' . $row[$var] . '</td>';
+					}
+					else if ($var == 'fuel_odo') {
 						if ($previous_miles == 0) {
 							$miles = '---';
 						}
 						else {
 							$miles = ($row[$var] - $previous_miles);
+							$total_miles += $miles;
 						}
 						$previous_miles = $row[$var];
 						$table .=  '<td align="center">' . $row[$var] . '</td><td align="right">' . $miles . '</td>';
 					}
 					else if ($var == 'fuel_city_percent') {
 						$fuel_highway_percent = 100 - $row[$var];
+						$city_count++;
+						$total_city += $row[$var];
 						if ($miles == '---') {
 							$mpg = $miles;
 						}
 						else {
 							$mpg = round(($miles / $gallons), 1);
+							$mpg_count++;
+							$mpg_total += $mpg;
 						}
-						$table .= '<td align="center">' . $row[$var] . '</td><td align="center">' . $fuel_highway_percent . '</td><td>' . $mpg . '</td>';
+						$table .= '<td align="center">' . $row[$var] . '</td><td align="center">' . $fuel_highway_percent . '</td><td  align="right">' . $mpg . '</td>';
 					}
 					else {
-						$table .= '<td>' . $row[$var] . '</td>';
+						$table .= '<td> &nbsp;' . $row[$var] . '</td>';
 					}
 				}
 				$table .= '</tr>';
 			}
 		}
+		$table .= '<tr><th colspan=2>Total and Averages: </th><th>' . $total_miles . '</th><th> </th><th>' . $total_gallons . '</th><th>' . $total_cost . '</th><th>' . round(($total_city / $city_count), 1) . '</th><th>' . round((100 - ($total_city / $city_count)), 1) . '</th><th>' . round(($mpg_total / $mpg_count), 1) . '</th></tr>';
 		$table .= '</table>';
 		
 		return $table;
