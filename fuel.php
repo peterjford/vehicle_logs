@@ -4,6 +4,7 @@
 	 * 2015-05-12
 	 * 2015-05-22 - changed to class
 	 * 2015-05-26 - updated functions
+	 * 2015-06-01 - added cost per mile
 	 */
 
 /*
@@ -101,6 +102,7 @@ class Fuel {
 			}
 		}
 		$table .= '<tr><th colspan=2>Total and Averages: </th><th>' . $total_miles . '</th><th> </th><th>' . $total_gallons . '</th><th>' . $total_cost . '</th><th>' . round(($total_city / $city_count), 1) . '</th><th>' . round((100 - ($total_city / $city_count)), 1) . '</th><th>' . round(($mpg_total / $mpg_count), 1) . '</th></tr>';
+		$table .= '<tr><th colspan=3>Cost Per Mile: </th><th>' . round(($total_cost / $total_miles), 2) . '</th><th colspan=5></th></tr>';
 		$table .= '</table>';
 		
 		return $table;
