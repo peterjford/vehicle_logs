@@ -5,7 +5,7 @@
 	 * 2015-05-20 - added getDriversVehicles
 	 * 2015-05-26 - added addpage switch
 	 * 2015-06-01 - added form stuff, will also be part of addpage 
-	 *
+	 * 2015-06-02 - added form stuff for fuel, removed addpage switch.
 	 */
 
 require_once('config/db.php');
@@ -17,15 +17,22 @@ require_once('fuel.php');
 if (isset($_POST['add_driver'])) {
 	$drivers = new Driver();
 	$drivers->addDriver($_POST['driver_name']);
-        $table = $drivers->getDrivers();
-        $pagename = $drivers->getPagename();
+    $table = $drivers->getDrivers();
+    $pagename = $drivers->getPagename();
 }
 
 if (isset($_POST['remove_driver'])) {
-        $drivers = new Driver();
-        $drivers->removeDriver($_POST['driver_id']);
-        $table = $drivers->getDrivers();
-        $pagename = $drivers->getPagename();
+    $drivers = new Driver();
+    $drivers->removeDriver($_POST['driver_id']);
+    $table = $drivers->getDrivers();
+    $pagename = $drivers->getPagename();
+}
+
+if (isset($_POST['add_fuel'])) {
+	$fuel = new Fuel();
+	$fuel->fuelPurchase($_POST);
+	$table = $fuel->getFuelLog($_POST['fuel_garage_id']);
+	$pagename = $fuel->getPagename();
 }
 
 if (isset($_GET['driversgarage'])) {
@@ -58,31 +65,6 @@ if (isset($_REQUEST['viewpage'])) {
 			
 	}
 }
-
-if (isset($_REQUEST['addpage'])) {
-	switch ($_REQUEST['addpage']) {
-		case 'drivers' :
-			$drivers = new Driver();
-			$table = $drivers->getDrivers();
-			$pagename = $drivers->getPagename();
-			break;
-				
-		case 'garage' :
-			$garage = new Garage();
-			$table = $garage->getVehicles();
-			$pagename= $garage->getPagename();
-			break;
-			
-		case 'fuel' :
-			$fuel = new Fuel();
-			if (isset($_REQUEST['fuel_id'])){
-				$table = $fuel->getFuelLog($_REQUEST['fuel_id']);
-			}
-			$pagename= $fuel->getPagename();
-			break;
-	}
-}
-
 
 ?>
 <html>

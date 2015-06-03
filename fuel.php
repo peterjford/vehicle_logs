@@ -5,6 +5,7 @@
 	 * 2015-05-22 - changed to class
 	 * 2015-05-26 - updated functions
 	 * 2015-06-01 - added cost per mile
+	 * 2015-06-02 - added form to enter fuel purchase
 	 */
 
 /*
@@ -95,6 +96,9 @@ class Fuel {
 						$table .= '<td align="center">' . $row[$var] . '</td><td align="center">' . $fuel_highway_percent . '</td><td  align="right">' . $mpg . '</td>';
 					}
 					else {
+						if ($var == 'fuel_type') {
+							$last_fuel_type = $row[$var];
+					}
 						$table .= '<td> &nbsp;' . $row[$var] . '</td>';
 					}
 				}
@@ -103,13 +107,48 @@ class Fuel {
 		}
 		$table .= '<tr><th colspan=2>Total and Averages: </th><th>' . $total_miles . '</th><th> </th><th>' . $total_gallons . '</th><th>' . $total_cost . '</th><th>' . round(($total_city / $city_count), 1) . '</th><th>' . round((100 - ($total_city / $city_count)), 1) . '</th><th>' . round(($mpg_total / $mpg_count), 1) . '</th></tr>';
 		$table .= '<tr><th colspan=3>Cost Per Mile: </th><th>' . round(($total_cost / $total_miles), 2) . '</th><th colspan=5></th></tr>';
+		$table .= $this->fuelPurchaseForm($vehicle_id, $last_fuel_type);
 		$table .= '</table>';
 		
 		return $table;
 	}
 	
-	public function enterFuelPurchase($vehicle_id, $fueldata) {
-		// $fueldata is an array with values from enter fuel purchase form?
+	public function fuelPurchaseForm($vehicle_id, $last_fuel_type) {
+		$fuelform = '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+		$fuelform .= '<input type="hidden" name="fuel_garage_id" value="' . $vehicle_id . '">';
+		$fuelform .= '<tr><td><input type="text" name="fuel_date" value="' .date('Y-m-d H:i:s') . '"></td>';
+		$fuelform .= '<td><input type="text" name="fuel_odo"></td><td></td>';
+		$fuelform .= '<td><input type="text" name="fuel_type" value="' . $last_fuel_type . '" size="15"></td>';
+		$fuelform .= '<td><input type="text" name="fuel_gallons" size="10"></td>';
+		$fuelform .= '<td><input type="text" name="fuel_cost" size="10"></td>';
+		$fuelform .= '<td><input type="text" name="fuel_city_percent" size="8"></td>';
+		$fuelform .= '<td><input type="text" name="fuel_highway" size="8"></td><td></td>';
+		$fuelform .= '<td><input type="text" name="fuel_notes"></td></tr>';
+		$fuelform .= '<tr><th colspan="10"><input type="submit" name="add_fuel" value="Add Fuel Purchase"></th></tr></form>';
+		
+		return $fuelform;
+	}
+	
+	public function fuelPurchase($fueldata) {
+		$dbconnect = new dbconnect();
+		$mysqli = $dbconnect->getConnection();
+		$query = "insert into pjs_fuel (fuel_garage_id, ";
+		foreach ($this->fuel_columns as $val) {
+			$query .= $val;
+			if ($val != "fuel_notes") {
+				$query .= ', ';
+			}
+		}
+		$query .= ') values (' . $fueldata['fuel_garage_id'] . ', ';
+			foreach ($this->fuel_columns as $val) {
+			$query .= "'" . $fueldata[$val] . "'";
+			if ($val != "fuel_notes") {
+				$query .= ', ';
+			}
+		}
+		$query .= ')';
+
+		$result = $mysqli->query($query);
 	}
 	
 	public function editFuelLog() {

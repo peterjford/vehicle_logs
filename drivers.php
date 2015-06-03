@@ -4,7 +4,7 @@
  	 * 2015-05-12
  	 * 2015-05-18 - changed to class 
  	 * 2015-05-20 - added link to drivers vehicles
-	 * 2015-06-01 - added "addDriverForm" and "addDriver"
+	 * 2015-06-01 - added "addDriverForm" and "addDriver" and "removeDriverForm" and "removeDriver"
 	 */
 
 require_once('config/db.php');
