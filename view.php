@@ -13,7 +13,7 @@ require_once('drivers.php');
 require_once('garage.php');
 require_once('fuel.php');
 
-//<input type="hidden" name="driver_id" value="' . $driver_id . '"><td><input type="submit" name="remove_driver" value="X">
+//name="pjs_fuel_id" value="' . $pjs_fuel_id . '"><td><input type="submit" name="remove_fuel_purchase" value="X"></form>';
 if (isset($_POST['add_driver'])) {
 	$drivers = new Driver();
 	$drivers->addDriver($_POST['driver_name']);
@@ -32,6 +32,13 @@ if (isset($_POST['add_fuel'])) {
 	$fuel = new Fuel();
 	$fuel->fuelPurchase($_POST);
 	$table = $fuel->getFuelLog($_POST['fuel_garage_id']);
+	$pagename = $fuel->getPagename();
+}
+
+if (isset($_POST['remove_fuel_purchase'])) {
+	$fuel = new Fuel();
+	$fuel->removePurchase($_POST['pjs_fuel_id']);
+	$table = $fuel->getFuelLog($_POST['vehicle_id']);
 	$pagename = $fuel->getPagename();
 }
 
